@@ -344,13 +344,18 @@ def _page_overview(filings: pd.DataFrame, companies: pd.DataFrame) -> None:
 
 def _render_company_card(row: pd.Series) -> None:
     """Render one company highlight card on the Overview page."""
-    description = (row.get("scraped_desc") or "").strip()
+    def _normalize_text(value) -> str:
+        if value is None or pd.isna(value):
+            return ""
+        return str(value).strip()
+
+    description = _normalize_text(row.get("scraped_desc"))
     if description:
         # Belt-and-braces: catch any HTML entities or stray U+FFFD that
         # slipped through the scraper before we improved its cleaner.
         description = html.unescape(description).replace("�", "")
     if not description:
-        focus = (row.get("focus") or "").strip()
+        focus = _normalize_text(row.get("focus"))
         if focus:
             description = f"_{focus}_ — no scraped description yet."
         else:
@@ -388,8 +393,12 @@ def _render_company_card(row: pd.Series) -> None:
         st.write(description)
 
         # Technology tag chips
-        tags_str = (row.get("tags") or "")
-        tags = [t.strip() for t in tags_str.split("|") if t.strip()]
+        tags_raw = row.get("tags")
+        if isinstance(tags_raw, list):
+            tags = [str(t).strip() for t in tags_raw if str(t).strip()]
+        else:
+            tags_str = "" if pd.isna(tags_raw) else str(tags_raw)
+            tags = [t.strip() for t in tags_str.split("|") if t.strip()]
         if tags:
             chips = " ".join(f":blue-background[{t}]" for t in tags[:6])
             st.markdown(chips)
