@@ -1,6 +1,6 @@
 # Review queue — pending
 
-_Generated 2026-06-07T09:00:40+00:00 UTC._
+_Generated 2026-06-14T09:40:04+00:00 UTC._
 
 This file holds candidates the automated pipeline couldn't classify confidently. Working it is how the repository stays trustworthy for a healthcare-IT audience. To resolve an item, open a pull request that edits the canonical data (company focus, technology tags, or a merge between two records) and delete the item from this list.
 
@@ -10,36 +10,36 @@ These companies produced zero technology tags from the classifier. Either the co
 
 | Company | State | Focus | Industry group | Largest raise | Filing |
 |---|---|---|---|---:|---|
+| Conexeu Sciences Inc. | NV | Biotechnology | Biotechnology | $1.2M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2066836&type=D) |
+| Los Angeles Project Inc | TX | Biotechnology | Biotechnology | $6.9M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2136290&type=D) |
+| Biostax Corp. | FL | Biotechnology | Biotechnology | $7.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1559356&type=D) |
+| HCW Biologics Inc. | FL | Biotechnology | Biotechnology | $4.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1828673&type=D) |
+| Magvation Inc. | NV | Other Health Care | Other Health Care | $9.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2026115&type=D) |
+| Whitecap Care, LLC | VA | Healthcare service | Other Health Care | $400K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2138799&type=D) |
+| Infinant Health, Inc. | CA | Healthcare service | Other Health Care | $118.2M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2139235&type=D) |
+| NV MEDTECH, Inc. | NV | Other Health Care | Other Health Care | $20.9M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2139273&type=D) |
+| Contra Healthcare Solutions, LLC | PA | Other Health Care | Other Health Care | $500K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1880961&type=D) |
+| Pretura Health, Inc. | PA | Healthcare service | Other Health Care | $2.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2139660&type=D) |
+| Contraline, Inc. | VA | Biotechnology | Biotechnology | $115.9M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1818752&type=D) |
+| Haku Bio, Inc. | MA | Biotech R&D | Biotechnology | $2.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2114425&type=D) |
+| Emory Investor II LLC | TN | Other Health Care | Other Health Care | $2.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2137916&type=D) |
+| Ovelle Bio Corp. | DE | Biotech R&D | Biotechnology | $9.2M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2139798&type=D) |
+| Anodyne Nanotech, Inc. | MA | Other Health Care | Other Health Care | $17.3M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1818572&type=D) |
+| Duke Street Bio Ltd | X0 | Biotech R&D | Biotechnology | $4.1M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1823388&type=D) |
+| Dyme Medical, Inc. | TX | Healthcare service | Other Health Care | $10.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2028625&type=D) |
+| Orbio Health Inc. | CA | Healthcare service | Other Health Care | $2.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2068690&type=D) |
+| Clinexa Health, Inc. | NY | Healthcare service | Other Health Care | $1.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2140159&type=D) |
+| Egg Medical, Inc. | MN | Healthcare service | Other Health Care | $13.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1783611&type=D) |
+| Xlue Inc. | PA | Other Health Care | Other Health Care | $5.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2098137&type=D) |
+| Commense Bio, Inc. | CO | Biotech R&D | Biotechnology | $2.7M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2135129&type=D) |
+| NSite Medical, Inc. | CA | Healthcare service | Other Health Care | $4.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2135867&type=D) |
+| Aisona Care Inc. | CA | Healthcare service | Other Health Care | $200K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2140039&type=D) |
+| LYOS INC | NJ | Other Health Care | Other Health Care | $10.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2140562&type=D) |
 | Quel Health, Inc. | NM | Healthcare service | Other Health Care | — | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2128803&type=D) |
 | Endeavor Orthopaedics, Inc. | OK | Other Health Care | Other Health Care | $8.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2137100&type=D) |
 | Strucvue Medical, Inc. | CA | Healthcare service | Other Health Care | $100 | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2137785&type=D) |
 | Socrates Health Solutions, Inc. | TX | Healthcare service | Other Health Care | $1.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1594118&type=D) |
 | JASTLabs Corp | A6 | Biotechnology | Biotechnology | $50.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2131485&type=D) |
-| Uniform Bio Inc. | NC | Biotech R&D | Biotechnology | $2.7M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2136781&type=D) |
-| BioStem Technologies, Inc. | FL | Biotechnology | Biotechnology | $2.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1658678&type=D) |
-| Optimeos Life Sciences, Inc. | NJ | Biotechnology | Biotechnology | $2.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1819114&type=D) |
-| Imagen Floss Dentistry Support Services, LLC | AZ | Other Health Care | Other Health Care | $738K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2138417&type=D) |
-| Entact Bio, Inc. | MA | Biotech R&D | Biotechnology | $10.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2008244&type=D) |
-| CHANNEL ROBOTICS, INC. | CA | Other Health Care | Other Health Care | $4.7M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2045979&type=D) |
-| Human Biotech, Inc. | MA | Biotech R&D | Biotechnology | $10.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2126389&type=D) |
-| Know Kancer, Inc. | DC | Other Health Care | Other Health Care | $1.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2138005&type=D) |
-| Illuminare Biotechnologies Inc | NY | Biotechnology | Biotechnology | $4.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1701523&type=D) |
-| Protect3d, Inc. | NC | Other Health Care | Other Health Care | $1.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1792316&type=D) |
-| Senti Biosciences Holdings, Inc. | CA | Biotech R&D | Biotechnology | $40.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2138461&type=D) |
-| Health for Everyone, Inc. | TX | Healthcare service | Other Health Care | $5.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2137776&type=D) |
-| FIRM OF JOHN DICKINSON SCHNEIDER INC | IL | Other Health Care | Other Health Care | — | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=798320&type=D) |
-| Cagent Vascular, Inc. | PA | Other Health Care | Other Health Care | $41.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1612011&type=D) |
-| Charlotte's Web Holdings, Inc. | CO | Other Health Care | Other Health Care | $10.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1750155&type=D) |
-| Antlia Bioscience, Inc. | CA | Biotech R&D | Biotechnology | $20.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1829522&type=D) |
-| Klinic Inc | TX | Other Health Care | Other Health Care | $24.2M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1926655&type=D) |
-| Texas Health Surgery Center Forney, LLC | AL | Clinical device / surgical | Other Health Care | $188K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1980590&type=D) |
-| KindSight, Inc. | NC | Other Health Care | Other Health Care | $250K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2135933&type=D) |
-| Los Angeles Project Inc | TX | Biotechnology | Biotechnology | $1.5M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2136290&type=D) |
-| Aortic Solutions, Inc. | PA | Other Health Care | Other Health Care | $6.0M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2138143&type=D) |
-| Countach Medical Corp | SD | Healthcare service | Other Health Care | $750K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2138901&type=D) |
-| Cosmetic Physician Partners, LLC | TX | Care delivery / clinical service | Other Health Care | $1.1M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1897259&type=D) |
-| ONCOSYNERGY, INC. | CT | Biotechnology | Biotechnology | $8.2M | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1556747&type=D) |
-| Imagen San Antonio Aesthetic Support Services, LLC | AZ | Other Health Care | Other Health Care | $742K | [link](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2136055&type=D) |
 
 ## Low-confidence classifications (0)
 
@@ -69,6 +69,7 @@ Pairs of companies whose canonical names are 75–95% similar. If they are the s
 | CNS Pharmaceuticals, Inc. (#230) | Hepion Pharmaceuticals, Inc. (#38) | 0.829 |
 | CNS Pharmaceuticals, Inc. (#230) | KIORA PHARMACEUTICALS INC (#28) | 0.800 |
 | CNS Pharmaceuticals, Inc. (#230) | Natsar Pharmaceuticals, Inc. (#189) | 0.878 |
+| Contra Healthcare Solutions, LLC (#321) | Socrates Health Solutions, Inc. (#281) | 0.769 |
 | Cue Biopharma, Inc. (#210) | Spine BioPharma, Inc. (#306) | 0.786 |
 | Enveric Biosciences, Inc. (#166) | Mitera Biosciences Inc. (#171) | 0.757 |
 | Enveric Biosciences, Inc. (#166) | TAVRA BIOSCIENCES LLC (#8) | 0.778 |
@@ -80,4 +81,3 @@ Pairs of companies whose canonical names are 75–95% similar. If they are the s
 | Imagen Cosmetic Smiles Support Services, LLC (#226) | Imagen Pineview Support Services, LLC (#244) | 0.761 |
 | KIORA PHARMACEUTICALS INC (#28) | Natsar Pharmaceuticals, Inc. (#189) | 0.791 |
 | Mitera Biosciences Inc. (#171) | Reprogram Biosciences, Inc. (#256) | 0.769 |
-| Mitera Biosciences Inc. (#171) | TAVRA BIOSCIENCES LLC (#8) | 0.857 |
