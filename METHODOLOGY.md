@@ -17,7 +17,7 @@ If you're evaluating the dashboard, this is the document to read first.
   telehealth, healthtech-adjacent services. The technology taxonomy
   (below) is the specific lens we use to tag companies.
 - **Audience:** healthcare IT professionals, executives, and students.
-- **Update cadence:** weekly. Runs every Sunday via GitHub Actions cron.
+- **Update cadence:** weekly, via an automated pipeline run.
 
 ## The three "new" signals
 
@@ -52,36 +52,25 @@ no ToS violations.
   *Pharmaceuticals*, *Other Health Care*. Accessed via the daily master
   index; not full-text search (which was returning 500s when we built).
 - **SBIR/STTR awards** (`api.www.sbir.gov`) — federal R&D grants,
-  heavily populated with HHS/NIH healthtech awardees. **Currently
-  offline service-wide** (429 TooManyRequests across all clients);
-  the collector is in place and will pick up results when the API
-  recovers.
+  heavily populated with HHS/NIH healthtech awardees.
 
 ### Secondary — Tier B
 
 - **Healthtech trade news (RSS):** MobiHealthNews, Fierce Healthcare,
   Healthcare IT News, Rock Health. Articles are scanned for mentions of
   companies already in the repository; matches are attached to the
-  company's record and feed the classifier. Becker's Hospital Review
-  blocks non-browser requests and is not currently included.
-
-### Planned (Phase 4)
-
-- NIH RePORTER, USPTO PatentsView, ClinicalTrials.gov — for
-  enrichment of companies already surfaced.
-- Seed list: Rock Health 50, CB Insights Digital Health 50, and other
-  curated alumni lists — to improve news-to-company matching.
+  company's record and feed the classifier.
 
 ## Company identity
 
 Every record has a **canonical name** — lowercase, punctuation stripped,
 common entity suffixes (`Inc`, `LLC`, `Corp`, `Ltd`, `PLC`…) removed —
-used as the merge key. The SQLite column `companies.name_canonical` is
+used as the merge key. The database column `companies.name_canonical` is
 `UNIQUE`; subsequent filings attach to the existing row rather than
 creating a duplicate. Display names preserve original casing for the UI.
 
-Fuzzy merge proposals (names 75–95% similar) go to the
-[review queue](review/pending.md) rather than auto-merging.
+Fuzzy merge proposals (names 75–95% similar) go to the in-app review
+queue rather than auto-merging.
 
 ## Technology taxonomy
 
@@ -110,13 +99,48 @@ Every company is tagged with zero or more categories from a fixed,
 Tagging is rule-based (keyword patterns over company name, industry
 group, heuristic focus label, and any attached news text). Each rule
 carries a base confidence score; the highest confidence per category is
-kept. A manual-override path is planned for Phase 4.
+kept. Reviewers can add or remove tags manually — human tags are never
+overwritten by the pipeline.
+
+## Human review & audit trail
+
+Nothing is published to the public dashboard until a signed-in reviewer
+validates it, unless the site is running in **auto-publish-with-badge**
+mode (`site_settings.publish_policy = 'auto_badge'`). In that mode,
+unreviewed records are shown on the public site with a visible
+"Unreviewed" badge so visitors can tell the difference; the default
+posture is **fail-closed** (`publish_policy = 'fail_closed'`), meaning
+unreviewed records simply don't appear at all.
+
+Review happens in an in-app reviewer tool, not via GitHub pull requests.
+Authenticated reviewers (`role = 'reviewer'` or `role = 'admin'`) work a
+queue of items the pipeline couldn't resolve confidently:
+
+- **Untagged companies** — the classifier produced zero tags. The
+  reviewer either confirms the company is genuinely non-specific or adds
+  a tag manually.
+- **Low-confidence classifications** — the best rule that fired did so
+  below the confidence threshold. The reviewer confirms or corrects it.
+- **Fuzzy-match pairs** — two records with 75–95% name similarity. If
+  they're the same entity, the reviewer merges them.
+
+For each company, a reviewer can **validate**, **edit**, or **invalidate**
+the record. Every one of those actions — along with pipeline-driven
+edits — is written to an append-only `revisions` table capturing entity
+type, entity id, action, field, old value, new value, the acting user
+(`NULL` for pipeline-driven changes), and a timestamp. This gives every
+field on every company a full, queryable provenance history rather than
+relying on commit-log archaeology.
+
+Biasing toward "hold for review" over "auto-publish" is deliberate.
+A healthcare-IT audience will lose trust fast if low-quality records
+show up, and we'd rather fail-closed.
 
 ## Data-quality gates
 
-Each weekly run produces findings from automated gates. Findings are
-surfaced in the report and in the dashboard; warning-level findings
-trigger a manual review before the report circulates.
+Each weekly pipeline run produces findings from automated gates, recorded
+on the run itself (`pipeline_runs.qa_findings`) and surfaced to reviewers
+for acknowledgement:
 
 - **Spike check** — filings this week vs. trailing 12-week mean (2σ
   threshold). A week that's dramatically bigger than normal might be a
@@ -128,30 +152,14 @@ trigger a manual review before the report circulates.
 - **URL-sample check** — a random sample of filing URLs is HEAD-checked
   for 4xx/5xx to catch link rot.
 
-## Review queue
-
-[review/pending.md](review/pending.md) holds items the pipeline couldn't
-resolve confidently. Volunteers work the queue by submitting pull
-requests:
-
-- **Untagged companies** — classifier produced zero tags. Either confirm
-  the company is genuinely non-specific, or add a tag manually.
-- **Low-confidence classifications** — the best rule that fired did so
-  below the 0.7 confidence threshold. Confirm or correct.
-- **Fuzzy-match pairs** — two records with 75–95% name similarity. If
-  the same entity, merge.
-
-Biasing toward "hold for review" over "auto-publish" is deliberate.
-A healthcare-IT audience will lose trust fast if low-quality records
-show up, and we'd rather fail-closed.
-
 ## Corrections and provenance
 
 - Every company record links back to the exact filings and articles
-  that contributed to it. Dashboard users can click through to the
-  SEC or news source directly.
-- Merges, splits, and retractions are documented in the commit log of
-  the data files themselves (which are committed to git).
+  that contributed to it. Dashboard users can click through to the SEC
+  or news source directly.
+- Corrections come from signed-in reviewers (`role = 'reviewer'` or
+  `role = 'admin'`) working in the reviewer tool; every edit, validation,
+  and invalidation is provenance-tracked in the `revisions` table.
 - If a company pivots out of healthcare or shuts down, the record is
   archived with a reason — never silently deleted.
 
@@ -159,9 +167,8 @@ show up, and we'd rather fail-closed.
 
 - **Form D has no business description.** We infer a coarse "likely
   focus" label from the company name (e.g. a name containing
-  *Therapeutics* → drug development). This is a Phase-1 placeholder;
-  real descriptions will arrive with SBIR abstracts and news-article
-  attachment.
+  *Therapeutics* → drug development) until a reviewer or a richer source
+  (news article, SBIR abstract) supplies a real one.
 - **Industry group is self-reported.** Pure digital-health software
   startups that file under *Technology* rather than a healthcare
   industry group are missed by Form D filtering.
@@ -169,24 +176,17 @@ show up, and we'd rather fail-closed.
   crowdfunding are separate filing paths we don't currently ingest.
 - **News attachment rate is currently low** for small Form D filers —
   trade press covers large incumbents more than just-funded startups.
-  Phase 4's seed list of known digital-health companies addresses this.
 - **Incorporation dates are not available** for most companies, so the
   "newly founded" count is an imperfect proxy.
-- **SBIR/STTR is offline** at time of build (429 service-wide).
-
-## How to submit a correction
-
-1. Open a pull request against this repository.
-2. Edit the relevant rows in `data/startups.csv` or the review queue.
-3. Reference the source that supports your correction in the PR
-   description.
-
-For issues that aren't data corrections (e.g. taxonomy feedback,
-missing sources, new feature ideas) open a GitHub issue.
+- **Coverage is best-effort, not exhaustive.** This is not a
+  comprehensive registry of every US healthtech company — it's a
+  weekly sample built from free, public sources.
+- **Classification confidence varies** by category and by how much
+  text (name, industry group, news coverage) is available for a given
+  company.
 
 ## Licensing
 
 All data presented here comes from public US government filings and
 publicly-distributed RSS feeds. The methodology, code, and derived
-tagging are published under a permissive open-source license — see
-[LICENSE](LICENSE) (coming Phase 4).
+tagging are published under the MIT License — see [LICENSE](LICENSE).

@@ -1,0 +1,65 @@
+# Healthtech Dashboard 1.0 — production/homelab stack.
+#   cp .env.example .env   (edit it)
+#   docker compose up -d --build
+#
+# Three services share one SQLite file in ./data via the /data mount.
+# The weekly pipeline runs inside pipeline-cron (supercronic), replacing
+# the POC's GitHub Actions workflow.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web.Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_PATH: /data/app.db
+      SITE_URL: ${SITE_URL:-http://localhost}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    volumes:
+      - ./data:/data
+    expose:
+      - "3000"
+
+  # One-shot + weekly data acquisition. supercronic fires Sunday 06:00 UTC
+  # (see deploy/crontab). Manual run:
+  #   docker compose run --rm pipeline-cron python -m pipeline.run --days 7
+  pipeline-cron:
+    build:
+      context: .
+      dockerfile: pipeline/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_PATH: /data/app.db
+      SEC_USER_AGENT: ${SEC_USER_AGENT:?set SEC_USER_AGENT in .env}
+    volumes:
+      - ./data:/data
+      - ./deploy/crontab:/app/crontab:ro
+    command: ["supercronic", "/app/crontab"]
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # A bare hostname (e.g. dash.example.com) turns on automatic HTTPS.
+      # Default serves plain HTTP on localhost — fine for homelab testing.
+      SITE_DOMAIN: ${SITE_DOMAIN:-:80}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:

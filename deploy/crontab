@@ -1,0 +1,3 @@
+# Weekly ingest — Sunday 06:00 UTC, same cadence as the POC's GitHub Action
+# (SEC EDGAR's daily index is stable by then; feeds cover the full week).
+0 6 * * 0 cd /app/pipeline && python -m pipeline.run --days 7

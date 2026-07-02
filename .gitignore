@@ -1,10 +1,19 @@
+# deps / builds
+node_modules/
+.next/
 __pycache__/
 *.pyc
 .venv/
-venv/
+
+# data — never commit the database (fresh-start doctrine, 1.0)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# env & secrets
 .env
+.env.local
+
+# misc
 .DS_Store
-.idea/
-.vscode/
 *.log
-.streamlit/secrets.toml

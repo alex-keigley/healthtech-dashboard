@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #f7faf9;
+  --color-surface: #ffffff;
+  --color-border: #dbe5e3;
+  --color-text: #0f2320;
+  --color-text-muted: #4b5f5c;
+  --color-primary: #0f766e; /* teal-700 */
+  --color-primary-hover: #0d5f59;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #14b8a6; /* teal-500 */
+  --color-danger: #b91c1c;
+  --color-success: #15803d;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Methodology page markdown rendering */
+.markdown-body {
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.markdown-body h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.markdown-body h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.4rem;
+}
+
+.markdown-body h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.markdown-body p {
+  margin: 0.85rem 0;
+  color: var(--color-text);
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin: 0.85rem 0;
+  padding-left: 1.5rem;
+  color: var(--color-text);
+}
+
+.markdown-body ul {
+  list-style: disc;
+}
+
+.markdown-body ol {
+  list-style: decimal;
+}
+
+.markdown-body li {
+  margin: 0.35rem 0;
+}
+
+.markdown-body li > p {
+  margin: 0.25rem 0;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body code {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+}
+
+.markdown-body pre {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+}
+
+.markdown-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2rem 0;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.markdown-body th {
+  background: var(--color-bg);
+  font-weight: 600;
+}

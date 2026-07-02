@@ -1,159 +1,161 @@
-# Healthtech Startup Dashboard
+# Healthtech Startup Dashboard 1.0
 
-A weekly-updated dashboard tracking new US healthcare technology startups
-and maintaining a curated, browsable repository tagged with technology
-categories.
+A self-hosted, human-reviewed repository of newly funded and newly surfaced
+US healthcare-technology startups, built from public SEC filings and trade
+press. Complete rewrite of the Streamlit POC for production self-hosting.
 
-**Audience:** healthcare IT professionals, executives, and students. Every
-data point is traceable to a public source; see [METHODOLOGY.md](METHODOLOGY.md)
-for the full doctrine.
+**Audience:** healthcare physicians, administrators, and executives — many of
+them HIMSS members — who want to see what new healthtech companies exist.
+Every data point is traceable to a public source and passes through human
+review before publication; see [METHODOLOGY.md](METHODOLOGY.md).
 
 ---
 
-## What it does
+## What's here
 
-Every week, the pipeline fetches three streams of public data, resolves
-entities against the existing repository, and classifies every company
-against an 18-category technology taxonomy:
+- **Public one-pager** — the entire public experience lives on a single page:
+  hero stats (three "new" signals), this week's companies, a searchable and
+  filterable explorer, and trends. Tapping any company opens a detail drawer
+  (description, tags, SEC filings, news) without leaving the page. The only
+  off-page link is the [methodology](METHODOLOGY.md), published separately so
+  it can be scrutinized at the scientific level.
+- **Data pipeline** (Python) — weekly ingest of SEC EDGAR Form D filings,
+  healthtech trade RSS, a curated seed list, and SBIR/STTR awards; entity
+  resolution, an 18-category rule-based classifier, QA gates. New records
+  land as *pending review* — nothing is published automatically.
+- **Reviewer tool** — authenticated workbench to validate, edit, tag, merge,
+  or invalidate records, with every change written to an append-only audit
+  log (`revisions`).
+- **Admin panel** — user/role management, site presentation settings,
+  pipeline run history.
+- **Auth** — invite-only email accounts; sign in with a password or a
+  one-time emailed code. Roles: **Viewer** (same view as the public),
+  **Reviewer** (works the review queue), **Admin** (full control).
 
-- **SEC EDGAR Form D filings** — private-company capital raises in five
-  healthcare industry groups (primary signal for "newly funded").
-- **Healthtech trade news** (MobiHealthNews, Fierce Healthcare, Healthcare
-  IT News, Rock Health) — articles attached to companies already in the
-  repository to enrich their text profile.
-- **Curated seed list** of well-known US digital-health companies — so
-  the news matcher has something to match against even while the Form D
-  cohort is small.
-- **SBIR/STTR awards** — *(collector ready; API currently offline)*.
+## Architecture
 
-Three independent "new" signals are tracked each week (*newly funded*,
-*newly surfaced*, *newly founded*), not collapsed into one — see the
-methodology for why.
-
-The output lands in a local SQLite store (`data/startups.db`), a weekly
-markdown report (`reports/<week_start>.md`), a human-review queue
-(`review/pending.md`), and a Streamlit dashboard.
-
-## Dashboard
-
-Seven pages:
-
-| Page | What it shows |
-|---|---|
-| Overview | Top healthtech companies in the past 30 days, with descriptions |
-| Startup Explorer | Every tracked company with technology tags + per-company detail |
-| Trends | Weekly filing volume, state distribution, raise histogram |
-| Technology Lens | Per-category deep dive |
-| Weekly report | Auto-generated markdown summary |
-| Review queue | Untagged, low-confidence, fuzzy-match items awaiting review |
-| Methodology | Public methodology document |
-
-## Local setup
-
-Requires Python 3.10+.
-
-```bash
-pip install -r requirements.txt
-
-# Create the database schema
-python -m pipeline.db
-
-# Run the full pipeline for the last 7 days
-python -m pipeline.run --days 7
-
-# Launch the dashboard
-streamlit run app.py
+```
+caddy (TLS) ──► web (Next.js 15)  ──┐
+                                    ├──► data/app.db  (SQLite, WAL)
+pipeline-cron (Python, Sunday 06:00 UTC) ┘
 ```
 
-The SQLite DB, weekly report, and review queue are all committed to the
-repo so history is auditable and Streamlit Cloud can redeploy on push.
+One SQLite file is the whole data layer — appropriate for this write volume
+(one weekly batch + occasional reviewer edits). Schema source of truth:
+[`db/migrations/0001_init.sql`](db/migrations/0001_init.sql); both apps apply
+migrations idempotently.
+
+## Quick start (local development — Windows/macOS/Linux)
+
+Requires Node 20+ and Python 3.10+.
+
+```bash
+cp .env.example .env          # edit: ADMIN_EMAIL/PASSWORD, SEC_USER_AGENT
+
+# Web app
+cd web
+npm install
+npm run db:migrate            # creates ../data/app.db
+npm run seed:admin            # first admin from ADMIN_EMAIL/ADMIN_PASSWORD
+npm run dev                   # http://localhost:3000
+
+# Pipeline (separate terminal; fills the review queue)
+cd pipeline
+pip install -r requirements.txt
+python -m pipeline.run --days 7
+```
+
+With `SMTP_HOST` unset, one-time login codes print to the web server console
+instead of sending email — no mail setup needed in dev.
+
+## Production install (Linux box / homelab / cloud VM)
+
+Requires Docker + Docker Compose v2.
+
+```bash
+git clone https://github.com/alex-keigley/healthtech-dashboard.git
+cd healthtech-dashboard
+cp .env.example .env    # set ADMIN_EMAIL/PASSWORD, SEC_USER_AGENT,
+                        # SMTP_* (for login codes), SITE_URL, and SITE_DOMAIN
+docker compose up -d --build
+```
+
+That starts three containers: `web` (applies migrations and seeds the admin
+on boot), `pipeline-cron` (weekly ingest, Sunday 06:00 UTC), and `caddy`
+(reverse proxy; set `SITE_DOMAIN` to a real hostname pointed at the box and
+Caddy provisions HTTPS automatically). The database lives in `./data/` on
+the host — **back it up by copying that directory** (e.g. nightly cron with
+`sqlite3 .backup` or a plain file copy while the site is quiet).
+
+Manual pipeline run:
+
+```bash
+docker compose run --rm pipeline-cron python -m pipeline.run --days 7
+```
+
+## Cloud hosting sizing
+
+The stack is light: Next.js idles around 150–300 MB, the pipeline is a
+short-lived weekly batch job that is network-bound (SEC/RSS fetches with
+politeness delays), and SQLite adds no server overhead. A burstable
+2 GB / 2 vCPU instance is comfortable for both the site and the weekly
+acquisition run; 1 GB works if you add swap for `docker compose build`
+(or build images elsewhere and pull them).
+
+| | AWS (EC2) | GCP (Compute Engine) | Azure (VM) | Approx. cost* |
+|---|---|---|---|---|
+| **Minimum** | t3.micro — 2 vCPU, 1 GB | e2-micro — 2 vCPU, 1 GB | B1s — 1 vCPU, 1 GB | ~$7–10/mo |
+| **Recommended** | t3.small — 2 vCPU, 2 GB | e2-small — 2 vCPU, 2 GB | B2ats v2 — 2 vCPU, 1–2 GB (or B1ms) | ~$15–20/mo |
+| **Headroom** (growth, many reviewers) | t3.medium — 2 vCPU, 4 GB | e2-medium — 2 vCPU, 4 GB | B2s — 2 vCPU, 4 GB | ~$30–40/mo |
+
+*On-demand US-region prices, approximate as of mid-2026 — check each
+provider's calculator. All tiers: **20 GB** of standard SSD storage is ample
+(the database is measured in megabytes). No managed database, cache, or
+object storage is required. Container-service equivalents (ECS Fargate,
+Cloud Run, Container Apps) work but complicate SQLite's need for a
+persistent local disk — a plain VM is the intended target.
+
+## Roles & access
+
+| Role | Access |
+|---|---|
+| Public (no account) | One-pager + methodology; published records only |
+| Viewer | Same as public (a provisioning state before promotion) |
+| Reviewer | + `/review`: queue, record workbench, merge tool, QA runs |
+| Admin | + `/admin`: users/roles, presentation settings, pipeline status |
+
+Accounts are invite-only — an admin creates them in `/admin/users`. The
+publish policy defaults to **fail-closed** (nothing public until a reviewer
+validates); admins can switch to *auto-publish with "unreviewed" badge* in
+`/admin/settings` if the queue backs up.
 
 ## Pipeline commands
 
 ```bash
-# Default: last 7 days, all stages
-# (seed -> Form D -> news -> tags -> QA -> snapshot -> review)
-python -m pipeline.run --days 7
-
-# Explicit window
-python -m pipeline.run --since 2026-04-01 --until 2026-04-07
-
-# Skip individual stages
-python -m pipeline.run --days 7 --skip-form-d --skip-news
-python -m pipeline.run --days 7 --skip-tags
-python -m pipeline.run --days 7 --skip-qa --skip-snapshot --skip-review
-
-# Skip network checks (offline)
-python -m pipeline.run --days 7 --skip-url-check
+cd pipeline
+python -m pipeline.run --days 7                    # default weekly window
+python -m pipeline.run --since 2026-06-01 --until 2026-06-07
+python -m pipeline.run --days 7 --skip-news --skip-tags
+python -m pipeline.run --days 3 --max-records 25 --skip-url-check   # smoke test
 ```
 
-## Contributing
-
-The repository is community-maintained. Volunteers work the review queue
-by submitting pull requests:
-
-1. Open [`review/pending.md`](review/pending.md).
-2. Pick an item you can resolve from public sources (company website,
-   press coverage, SEC filing detail).
-3. Open a PR that:
-   - Edits the relevant row in the data files (for tag corrections), OR
-   - Proposes a merge between two records (for fuzzy-match candidates),
-     preserving the earlier `first_funded_at` / `first_surfaced_at`, OR
-   - Leaves an untagged company untagged with a comment explaining why
-     (e.g. "holding LLC, not a tech startup").
-4. Reference the source that supports your edit in the PR description.
-
-For non-correction feedback (taxonomy gaps, new sources, feature ideas)
-open a GitHub issue.
-
-## Automation
-
-The pipeline runs every Sunday at 06:00 UTC via GitHub Actions (see
-[`.github/workflows/weekly.yml`](.github/workflows/weekly.yml)). Each
-run commits the refreshed `data/startups.db`, `reports/<week_start>.md`,
-and `review/pending.md` to the main branch, triggering a Streamlit Cloud
-redeploy.
-
-## Forking / adapting
-
-Nothing in the pipeline is region-specific — the Form D feed, news
-feeds, and seed list all default to a US-national scope. To narrow:
-
-1. Fork this repository.
-2. Adjust the hero caption in `app.py` and the methodology doc.
-3. Optionally narrow the Form D filter by state
-   (edit `collectors/sec_edgar.py`).
-4. Add any region-specific seed companies to `collectors/seed.py`.
-
-The data is public and the code is open.
+See [pipeline/README.md](pipeline/README.md) for all flags and env vars.
+`SEC_USER_AGENT` must identify you (SEC requirement).
 
 ## Project layout
 
 ```
-collectors/         — one module per data source
-  sec_edgar.py      — SEC Form D daily master index
-  sbir.py           — SBIR/STTR awards (stub; API offline)
-  news_rss.py       — healthtech trade news RSS
-  seed.py           — curated list of known healthtech companies
-pipeline/           — normalize, tag, QA, write
-  db.py             — SQLite schema + canonical-name helpers
-  entity_resolver.py — fuzzy name match + regex matcher
-  focus.py          — heuristic focus labels from company names
-  classifier.py     — technology taxonomy rule-based tagger
-  qa.py             — automated gates (spike, orphan, stale, URL)
-  snapshot.py       — weekly counts + markdown report writer
-  review.py         — review/pending.md generator
-  run.py            — pipeline runner (CLI)
-data/               — startups.db (committed)
-reports/            — weekly markdown reports (committed)
-review/             — pending.md + rejected.jsonl (committed)
-app.py              — Streamlit dashboard
-.github/workflows/  — weekly cron
+web/                Next.js 15 app — public site, auth, reviewer + admin tools
+pipeline/           Python — collectors, classifier, QA, review-queue writer
+db/migrations/      SQL schema (single source of truth, applied by both apps)
+data/               app.db (gitignored; created on first run)
+deploy/             web.Dockerfile, Caddyfile, crontab, entrypoint
+docker-compose.yml  web + pipeline-cron + caddy
+METHODOLOGY.md      public methodology (rendered at /methodology)
+PLAN.md             1.0 rebuild plan (design record)
 ```
 
-## Licensing
+## License
 
-All data presented here comes from public US government filings and
-publicly-distributed RSS feeds. The dashboard code and derived tagging
-are open-source; formal license file coming in Phase 4 follow-up.
-# healthtech-dashboard
+[MIT](LICENSE). All data comes from public US government filings and
+publicly distributed RSS feeds.
