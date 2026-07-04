@@ -38,7 +38,10 @@ export async function createSession(userId: number): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // Secure cookies only when the site is actually served over HTTPS —
+    // browsers drop Secure cookies on plain-HTTP origins (except localhost),
+    // which breaks login when testing via bare IP before TLS is set up.
+    secure: (process.env.SITE_URL ?? "").startsWith("https://"),
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
